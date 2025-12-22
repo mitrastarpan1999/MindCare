@@ -1,0 +1,26 @@
+{
+  "name": "mental-health-consultation-app",
+  "version": "1.0.0",
+  "description": "Full-stack mental health consultation platform",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "npm run client:dev & npm run server:dev",
+    "client:dev": "cd client && npm run dev",
+    "server:dev": "cd server && npm run dev",
+    "install:all": "npm install && cd client && npm install && cd ../server && npm install"
+  },
+  "keywords": [
+    "mental-health",
+    "consultation",
+    "psychologist"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@prisma/client": "^5.22.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.22.0"
+  }
+}

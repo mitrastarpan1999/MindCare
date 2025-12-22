@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #faf7f2;
+}
+
+/* Cream and White Color Scheme */
+:root {
+  --primary-cream: #f5f1ed;
+  --secondary-cream: #ede8e3;
+  --accent-warm: #d4af9f;
+  --accent-sage: #a8b8a8;
+  --text-dark: #2d2d2d;
+  --text-light: #5a5a5a;
+  
+  /* Dynamic admin settings (overridden by SettingsContext) */
+  --primary-color: #3b82f6;
+  --secondary-color: #10b981;
+  --background-color: #f9fafb;
+}
+
+/* Custom styles */
+.container-custom {
+  @apply max-w-6xl mx-auto px-4 py-8;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+  @apply px-4 py-2 rounded-lg transition-colors;
+}
+
+.btn-primary:hover {
+  filter: brightness(0.9);
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  color: white;
+  @apply px-4 py-2 rounded-lg transition-colors;
+}
+
+.btn-secondary:hover {
+  filter: brightness(0.9);
+}
+
+.btn-danger {
+  @apply bg-rose-100 text-rose-900 px-4 py-2 rounded-lg hover:bg-rose-200 transition-colors border border-rose-300;
+}
+
+.card {
+  @apply bg-white rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow border border-amber-50;
+}
+
+.input-field {
+  @apply w-full px-4 py-2 border border-amber-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-300 bg-white;
+}
+
+/* Sidebar offset for main content */
+main {
+  @apply transition-all duration-300;
+}
+
+/* Smooth transitions */
+@layer utilities {
+  .transition-sidebar {
+    @apply transition-all duration-300 ease-in-out;
+  }
+}

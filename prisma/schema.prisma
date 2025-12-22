@@ -1,0 +1,132 @@
+// prisma/schema.prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../server/node_modules/.prisma/client"
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  fullName  String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("admins")
+}
+
+model Setting {
+  key   String @id
+  value String
+
+  @@map("settings")
+}
+
+model Patient {
+  id              String     @id @default(cuid())
+  fullName        String
+  email           String     @unique
+  password        String
+  age             Int?
+  gender          String?
+  city            String?
+  state           String?
+  phone           String?
+  profilePicture  String?    // Profile picture URL or path
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  appointments Appointment[]
+  payments     Payment[]
+
+  @@map("patients")
+}
+
+model Psychologist {
+  id              String     @id @default(cuid())
+  fullName        String
+  email           String     @unique
+  password        String
+  phone           String?
+  gender          String?
+  clinicAddress   String?
+  qualifications  String?
+  specialization  String?    // e.g., "Depression", "Anxiety", "Stress Management"
+  licenseNumber   String     @unique
+  licenseDocUrl   String?
+  profilePicture  String?    // Profile picture URL or path
+  yearsExperience Int?
+  rating          Float      @default(5.0)
+  consultationFee Float
+  about           String?    // Bio/description
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  availabilities Availability[]
+  appointments   Appointment[]
+  payments       Payment[]
+
+  @@map("psychologists")
+}
+
+model Availability {
+  id               String        @id @default(cuid())
+  psychologistId   String
+  psychologist     Psychologist  @relation(fields: [psychologistId], references: [id], onDelete: Cascade)
+  dayOfWeek        String // "Monday", "Tuesday", etc.
+  startTime        String // "09:00"
+  endTime          String // "17:00"
+  slotDurationMins Int           @default(30)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@unique([psychologistId, dayOfWeek, startTime, endTime])
+  @@map("availabilities")
+}
+
+model Appointment {
+  id              String        @id @default(cuid())
+  patientId       String
+  patient         Patient       @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  psychologistId  String
+  psychologist    Psychologist  @relation(fields: [psychologistId], references: [id], onDelete: Cascade)
+  appointmentDate DateTime
+  startTime       String // "09:00"
+  endTime         String // "09:30"
+  status          String        @default("pending") // pending, approved, declined, completed, cancelled
+  statusNote      String?
+  consultationType String       @default("online") // online, in-person
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  payment Payment?
+
+  @@unique([psychologistId, appointmentDate, startTime])
+  @@map("appointments")
+}
+
+model Payment {
+  id              String        @id @default(cuid())
+  appointmentId   String        @unique
+  appointment     Appointment   @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  patientId       String
+  patient         Patient       @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  psychologistId  String
+  psychologist    Psychologist  @relation(fields: [psychologistId], references: [id], onDelete: Cascade)
+  amount          Float
+  currency        String        @default("INR")
+  orderId         String?       // Razorpay order ID
+  paymentId       String?       // Razorpay payment ID
+  signature       String?       // Razorpay signature
+  status          String        @default("pending") // pending, completed, failed
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@map("payments")
+}
