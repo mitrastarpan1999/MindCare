@@ -227,21 +227,21 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-semibold">Admin Dashboard</h1>
-        <div className="flex items-center gap-4">
-          <div className="text-sm">{user?.email}</div>
-          <button className="text-gray-600 underline text-sm" onClick={logout}>
+    <div className="p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 gap-3">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold">Admin Dashboard</h1>
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="text-xs sm:text-sm text-gray-700 truncate">{user?.email}</div>
+          <button className="text-gray-600 underline text-xs sm:text-sm hover:text-gray-900" onClick={logout}>
             Logout
           </button>
         </div>
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex gap-4 mb-6 border-b">
+      <div className="flex gap-2 sm:gap-4 mb-4 sm:mb-6 border-b overflow-x-auto">
         <button
-          className={`pb-2 px-4 ${
+          className={`pb-2 px-3 sm:px-4 whitespace-nowrap text-sm sm:text-base ${
             activeTab === 'users'
               ? 'border-b-2 border-blue-600 text-blue-600 font-semibold'
               : 'text-gray-600'
@@ -251,7 +251,7 @@ export default function AdminDashboard() {
           User Management
         </button>
         <button
-          className={`pb-2 px-4 ${
+          className={`pb-2 px-3 sm:px-4 whitespace-nowrap text-sm sm:text-base ${
             activeTab === 'settings'
               ? 'border-b-2 border-blue-600 text-blue-600 font-semibold'
               : 'text-gray-600'
@@ -262,16 +262,16 @@ export default function AdminDashboard() {
         </button>
       </div>
 
-      {loading && <p>Loading...</p>}
-      {error && <p className="text-red-600">{error}</p>}
+      {loading && <p className="text-sm sm:text-base">Loading...</p>}
+      {error && <p className="text-red-600 text-sm sm:text-base">{error}</p>}
 
       {/* User Management Tab */}
       {!loading && activeTab === 'users' && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           <section>
-            <h2 className="text-xl font-semibold mb-2">Patients</h2>
-            <form onSubmit={handleCreatePatient} className="mb-4 p-4 border rounded bg-white space-y-3">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3">Patients</h2>
+            <form onSubmit={handleCreatePatient} className="mb-4 p-3 sm:p-4 border rounded bg-white space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                 <input
                   className="input-field"
                   placeholder="Full name"

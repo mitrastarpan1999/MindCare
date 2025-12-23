@@ -61,66 +61,69 @@ export default function PatientDashboard() {
   };
 
   return (
-    <div className="container-custom">
-      <h1 className="text-4xl font-bold mb-8">Patient Dashboard</h1>
+    <div className="container-custom px-4 sm:px-6">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2">Patient Dashboard</h1>
+        <p className="text-sm sm:text-base text-gray-600">Welcome back, {user?.fullName}</p>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-        <div className="card">
-          <h3 className="text-lg font-semibold mb-2">Welcome</h3>
-          <p className="text-gray-700">{user?.fullName}</p>
-          <p className="text-sm text-gray-500">{user?.email}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 mb-8 sm:mb-12">
+        <div className="card p-4 sm:p-6">
+          <h3 className="text-sm sm:text-base font-semibold mb-1 sm:mb-2 text-gray-600">Welcome</h3>
+          <p className="text-base sm:text-lg font-bold text-gray-900">{user?.fullName}</p>
+          <p className="text-xs sm:text-sm text-gray-500 truncate">{user?.email}</p>
         </div>
 
-        <div className="card">
-          <h3 className="text-lg font-semibold mb-2">Profile</h3>
-          <p className="text-gray-700">Manage your profile and preferences</p>
-          <button onClick={() => setEditing(!editing)} className="btn-primary mt-2">
+        <div className="card p-4 sm:p-6">
+          <h3 className="text-sm sm:text-base font-semibold mb-1 sm:mb-2 text-gray-600">Profile</h3>
+          <p className="text-sm text-gray-700 mb-2 sm:mb-3">Manage your profile and preferences</p>
+          <button onClick={() => setEditing(!editing)} className="btn-primary text-sm sm:text-base w-full sm:w-auto">
             {editing ? 'Cancel' : 'Edit Profile'}
           </button>
         </div>
 
-        <div className="card">
-          <h3 className="text-lg font-semibold mb-2">Appointments</h3>
-          <p className="text-gray-700">View your bookings and history</p>
-          <a href="/patient/appointments" className="btn-primary inline-block mt-2">
+        <div className="card p-4 sm:p-6 sm:col-span-2 lg:col-span-1">
+          <h3 className="text-sm sm:text-base font-semibold mb-1 sm:mb-2 text-gray-600">Appointments</h3>
+          <p className="text-sm text-gray-700 mb-2 sm:mb-3">View your bookings and history</p>
+          <a href="/patient/appointments" className="btn-primary inline-block text-sm sm:text-base w-full sm:w-auto text-center">
             View Appointments
           </a>
         </div>
       </div>
 
       {editing && (
-        <div className="card max-w-2xl mb-12">
-          <h2 className="text-2xl font-bold mb-6">Edit Profile</h2>
+        <div className="card max-w-2xl mb-8 sm:mb-12 p-4 sm:p-6">
+          <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Edit Profile</h2>
           {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
+            <div className="bg-red-100 border border-red-400 text-red-700 px-3 sm:px-4 py-2 rounded mb-4 text-sm sm:text-base">
               {error}
             </div>
           )}
 
           <form onSubmit={handleUpdateProfile} className="space-y-4">
-            <div className="mb-6">
+            <div className="mb-4 sm:mb-6">
               <label className="block text-sm font-medium mb-2">Profile Picture</label>
-              <div className="flex items-center gap-4">
-                <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-200">
+              <div className="flex flex-col sm:flex-row items-center gap-4">
+                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
                   <img
                     src={previewUrl || resolveImage(user?.profilePicture, user?.fullName)}
                     alt="Profile"
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 w-full">
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleFileChange}
-                    className="mb-2"
+                    className="mb-2 text-sm w-full"
                   />
                   {profileFile && (
                     <button
                       type="button"
                       onClick={handleUploadPicture}
                       disabled={uploadingPic}
-                      className="btn-primary disabled:opacity-50"
+                      className="btn-primary disabled:opacity-50 text-sm w-full sm:w-auto"
                     >
                       {uploadingPic ? 'Uploading...' : 'Upload Picture'}
                     </button>
@@ -128,7 +131,7 @@ export default function PatientDashboard() {
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Age</label>
                 <input
@@ -209,23 +212,38 @@ export default function PatientDashboard() {
               </div>
             </div>
 
-            <button type="submit" disabled={loading} className="btn-primary disabled:opacity-50">
+            <button type="submit" disabled={loading} className="btn-primary disabled:opacity-50 w-full sm:w-auto text-sm sm:text-base">
               {loading ? 'Saving...' : 'Save Changes'}
             </button>
           </form>
         </div>
       )}
 
-      <div className="card">
-        <h2 className="text-2xl font-bold mb-4">Next Steps</h2>
-        <ol className="space-y-2 text-gray-700">
-          <li>1. Browse psychologists in our directory</li>
-          <li>2. Check their qualifications, experience, and availability</li>
-          <li>3. Book an appointment at your preferred time</li>
-          <li>4. Complete the payment to confirm the booking</li>
-          <li>5. Receive consultation confirmation via email</li>
+      <div className="card p-4 sm:p-6">
+        <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Next Steps</h2>
+        <ol className="space-y-2 text-sm sm:text-base text-gray-700">
+          <li className="flex items-start gap-2">
+            <span className="font-semibold text-primary flex-shrink-0">1.</span>
+            <span>Browse psychologists in our directory</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="font-semibold text-primary flex-shrink-0">2.</span>
+            <span>Check their qualifications, experience, and availability</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="font-semibold text-primary flex-shrink-0">3.</span>
+            <span>Book an appointment at your preferred time</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="font-semibold text-primary flex-shrink-0">4.</span>
+            <span>Complete the payment to confirm the booking</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="font-semibold text-primary flex-shrink-0">5.</span>
+            <span>Receive consultation confirmation via email</span>
+          </li>
         </ol>
-        <a href="/psychologists" className="btn-primary inline-block mt-4">
+        <a href="/psychologists" className="btn-primary inline-block mt-4 w-full sm:w-auto text-center text-sm sm:text-base">
           Browse Psychologists
         </a>
       </div>
