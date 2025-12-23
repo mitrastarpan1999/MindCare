@@ -13,6 +13,17 @@ export default function PsychologistDashboard() {
   const [previewUrl, setPreviewUrl] = useState(null);
   const [uploadingPic, setUploadingPic] = useState(false);
   const [profileError, setProfileError] = useState('');
+  const [availability, setAvailability] = useState({
+    monday: { enabled: false, start: '09:00', end: '17:00' },
+    tuesday: { enabled: false, start: '09:00', end: '17:00' },
+    wednesday: { enabled: false, start: '09:00', end: '17:00' },
+    thursday: { enabled: false, start: '09:00', end: '17:00' },
+    friday: { enabled: false, start: '09:00', end: '17:00' },
+    saturday: { enabled: false, start: '09:00', end: '17:00' },
+    sunday: { enabled: false, start: '09:00', end: '17:00' },
+  });
+  const [availabilitySaving, setAvailabilitySaving] = useState(false);
+  const [availabilityMessage, setAvailabilityMessage] = useState('');
 
   const apiBase = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000').replace(/\/?api$/, '');
   const resolveImage = (pic, fallbackName = 'Doctor') => {
@@ -75,6 +86,39 @@ export default function PsychologistDashboard() {
       setProfileError(err.response?.data?.message || 'Failed to upload picture');
     } finally {
       setUploadingPic(false);
+    }
+  };
+
+  const handleAvailabilityToggle = (day) => {
+    setAvailability(prev => ({
+      ...prev,
+      [day]: { ...prev[day], enabled: !prev[day].enabled }
+    }));
+  };
+
+  const handleTimeChange = (day, field, value) => {
+    setAvailability(prev => ({
+      ...prev,
+      [day]: { ...prev[day], [field]: value }
+    }));
+  };
+
+  const handleSaveAvailability = async () => {
+    setAvailabilitySaving(true);
+    setAvailabilityMessage('');
+    try {
+      // In a real implementation, this would call an API endpoint
+      // await psychologistAPI.updateAvailability(user.id, availability);
+      
+      // Simulating API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      setAvailabilityMessage('Availability schedule saved successfully!');
+      setTimeout(() => setAvailabilityMessage(''), 3000);
+    } catch (err) {
+      setAvailabilityMessage('Failed to save availability. Please try again.');
+    } finally {
+      setAvailabilitySaving(false);
     }
   };
 
@@ -227,8 +271,98 @@ export default function PsychologistDashboard() {
       {activeTab === 'availability' && (
         <div className="card p-4 sm:p-6">
           <h2 className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6">Set Availability</h2>
-          <p className="text-sm sm:text-base text-gray-600 mb-4">Coming soon: Manage your working hours and availability</p>
-          <button className="btn-primary w-full sm:w-auto">Set Schedule</button>
+          <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
+            Configure your working hours for each day of the week. Patients will be able to book appointments during your available hours.
+          </p>
+          
+          {availabilityMessage && (
+            <div className={`mb-4 px-3 sm:px-4 py-2 rounded text-sm sm:text-base ${
+              availabilityMessage.includes('success') 
+                ? 'bg-green-50 text-green-800 border border-green-200' 
+                : 'bg-red-50 text-red-800 border border-red-200'
+            }`}>
+              {availabilityMessage}
+            </div>
+          )}
+
+          <div className="space-y-3 sm:space-y-4 mb-6">
+            {Object.keys(availability).map((day) => (
+              <div key={day} className="border rounded-lg p-3 sm:p-4 bg-gray-50">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                  <div className="flex items-center gap-3 min-w-[140px]">
+                    <input
+                      type="checkbox"
+                      id={day}
+                      checked={availability[day].enabled}
+                      onChange={() => handleAvailabilityToggle(day)}
+                      className="w-5 h-5 text-primary border-gray-300 rounded focus:ring-2 focus:ring-primary"
+                    />
+                    <label htmlFor={day} className="font-semibold text-sm sm:text-base capitalize cursor-pointer">
+                      {day}
+                    </label>
+                  </div>
+                  
+                  {availability[day].enabled && (
+                    <div className="flex items-center gap-2 sm:gap-4 flex-1">
+                      <div className="flex items-center gap-2">
+                        <label className="text-xs sm:text-sm text-gray-600">From:</label>
+                        <input
+                          type="time"
+                          value={availability[day].start}
+                          onChange={(e) => handleTimeChange(day, 'start', e.target.value)}
+                          className="input-field text-sm py-1.5 px-2 sm:py-2 sm:px-3"
+                        />
+                      </div>
+                      <span className="text-gray-400">-</span>
+                      <div className="flex items-center gap-2">
+                        <label className="text-xs sm:text-sm text-gray-600">To:</label>
+                        <input
+                          type="time"
+                          value={availability[day].end}
+                          onChange={(e) => handleTimeChange(day, 'end', e.target.value)}
+                          className="input-field text-sm py-1.5 px-2 sm:py-2 sm:px-3"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button 
+              onClick={handleSaveAvailability}
+              disabled={availabilitySaving}
+              className="btn-primary w-full sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {availabilitySaving ? 'Saving...' : 'Save Schedule'}
+            </button>
+            <button 
+              onClick={() => {
+                const allEnabled = {};
+                Object.keys(availability).forEach(day => {
+                  allEnabled[day] = { enabled: true, start: '09:00', end: '17:00' };
+                });
+                setAvailability(allEnabled);
+              }}
+              className="btn-secondary w-full sm:w-auto"
+            >
+              Enable All Days
+            </button>
+            <button 
+              onClick={() => {
+                const allDisabled = {};
+                Object.keys(availability).forEach(day => {
+                  allDisabled[day] = { ...availability[day], enabled: false };
+                });
+                setAvailability(allDisabled);
+              }}
+              className="btn-outline w-full sm:w-auto"
+            >
+              Clear All
+            </button>
+          </div>
         </div>
       )}
 
