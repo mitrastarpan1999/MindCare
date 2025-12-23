@@ -98,12 +98,34 @@ export const profileAPI = {
 export const adminAPI = {
   getPatients: () => api.get('/admin/patients'),
   createPatient: (data) => api.post('/admin/patients', data),
+  updatePatient: (id, data) => api.put(`/admin/patients/${id}`, data),
+  uploadPatientProfilePicture: (id, file) => {
+    const formData = new FormData();
+    formData.append('profilePicture', file);
+    return api.post(`/admin/patients/${id}/upload-picture`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
   deletePatient: (id) => api.delete(`/admin/patients/${id}`),
   getPsychologists: () => api.get('/admin/psychologists'),
   createPsychologist: (data) => api.post('/admin/psychologists', data),
+  updatePsychologist: (id, data) => api.put(`/admin/psychologists/${id}`, data),
+  uploadPsychologistProfilePicture: (id, file) => {
+    const formData = new FormData();
+    formData.append('profilePicture', file);
+    return api.post(`/admin/psychologists/${id}/upload-picture`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
   deletePsychologist: (id) => api.delete(`/admin/psychologists/${id}`),
   getSettings: () => api.get('/admin/settings'),
   updateSettings: (data) => api.put('/admin/settings', data),
+};
+
+// Public endpoints
+export const publicAPI = {
+  sendContact: (data) => api.post('/public/contact', data),
+  getSettings: () => api.get('/public/settings'),
 };
 
 export default api;

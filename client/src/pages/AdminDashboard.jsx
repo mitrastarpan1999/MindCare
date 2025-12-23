@@ -11,7 +11,11 @@ export default function AdminDashboard() {
   const [error, setError] = useState(null);
   const [patientForm, setPatientForm] = useState({ fullName: '', email: '', password: '', city: '' });
   const [psychForm, setPsychForm] = useState({ fullName: '', email: '', password: '', city: '' });
+  const [editingPatient, setEditingPatient] = useState(null);
+  const [editingPsych, setEditingPsych] = useState(null);
   const [activeTab, setActiveTab] = useState('users'); // 'users' or 'settings'
+  const [patientPhotoFile, setPatientPhotoFile] = useState(null);
+  const [psychPhotoFile, setPsychPhotoFile] = useState(null);
   const themePresets = [
     {
       name: 'Calm Sky',
@@ -127,6 +131,48 @@ export default function AdminDashboard() {
       setPsychologists((prev) => prev.filter((p) => p.id !== id));
     } catch (err) {
       alert(err?.response?.data?.message || 'Delete failed');
+    }
+  };
+
+  const handleEditPatient = (patient) => {
+    setEditingPatient({ ...patient });
+  };
+
+  const handleSavePatient = async () => {
+    try {
+      await adminAPI.updatePatient(editingPatient.id, editingPatient);
+      if (patientPhotoFile) {
+        await adminAPI.uploadPatientProfilePicture(editingPatient.id, patientPhotoFile);
+      }
+      setPatients((prev) =>
+        prev.map((p) => (p.id === editingPatient.id ? editingPatient : p))
+      );
+      setEditingPatient(null);
+      setPatientPhotoFile(null);
+      alert('Patient updated successfully');
+    } catch (err) {
+      alert(err?.response?.data?.message || 'Update failed');
+    }
+  };
+
+  const handleEditPsych = (psych) => {
+    setEditingPsych({ ...psych });
+  };
+
+  const handleSavePsych = async () => {
+    try {
+      await adminAPI.updatePsychologist(editingPsych.id, editingPsych);
+      if (psychPhotoFile) {
+        await adminAPI.uploadPsychologistProfilePicture(editingPsych.id, psychPhotoFile);
+      }
+      setPsychologists((prev) =>
+        prev.map((p) => (p.id === editingPsych.id ? editingPsych : p))
+      );
+      setEditingPsych(null);
+      setPsychPhotoFile(null);
+      alert('Psychologist updated successfully');
+    } catch (err) {
+      alert(err?.response?.data?.message || 'Update failed');
     }
   };
 
@@ -278,9 +324,15 @@ export default function AdminDashboard() {
                       <td className="p-2">{p.fullName}</td>
                       <td className="p-2">{p.email}</td>
                       <td className="p-2">{p.city || '-'}</td>
-                      <td className="p-2 text-center">
+                      <td className="p-2 text-center space-x-2">
                         <button
-                          className="text-red-600"
+                          className="text-blue-600 hover:underline"
+                          onClick={() => handleEditPatient(p)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="text-red-600 hover:underline"
                           onClick={() => handleDeletePatient(p.id)}
                         >
                           Delete
@@ -351,9 +403,15 @@ export default function AdminDashboard() {
                       <td className="p-2">{s.email}</td>
                       <td className="p-2">{s.licenseNumber}</td>
                       <td className="p-2">₹{s.consultationFee}</td>
-                      <td className="p-2 text-center">
+                      <td className="p-2 text-center space-x-2">
                         <button
-                          className="text-red-600"
+                          className="text-blue-600 hover:underline"
+                          onClick={() => handleEditPsych(s)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="text-red-600 hover:underline"
                           onClick={() => handleDeletePsychologist(s.id)}
                         >
                           Delete
@@ -479,6 +537,335 @@ export default function AdminDashboard() {
               </button>
             </div>
           </form>
+        </div>
+      )}
+
+      {/* Patient Edit Modal */}
+      {editingPatient && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h2 className="text-2xl font-semibold mb-4">Edit Patient</h2>
+            <div className="space-y-4">
+              <div className="flex justify-center mb-4">
+                <div className="text-center">
+                  {patientPhotoFile && (
+                    <img
+                      src={URL.createObjectURL(patientPhotoFile)}
+                      alt="Preview"
+                      className="h-32 w-32 object-cover rounded-lg mx-auto mb-2"
+                    />
+                  )}
+                  {!patientPhotoFile && editingPatient.profilePicture && (
+                    <img
+                      src={editingPatient.profilePicture}
+                      alt="Current"
+                      className="h-32 w-32 object-cover rounded-lg mx-auto mb-2"
+                    />
+                  )}
+                  {!patientPhotoFile && !editingPatient.profilePicture && (
+                    <div className="h-32 w-32 bg-gray-200 rounded-lg mx-auto mb-2 flex items-center justify-center">
+                      <span className="text-gray-500">No Photo</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Profile Picture</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setPatientPhotoFile(e.target.files?.[0] || null)}
+                  className="input-field"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Full Name</label>
+                <input
+                  className="input-field"
+                  value={editingPatient.fullName}
+                  onChange={(e) =>
+                    setEditingPatient((prev) => ({ ...prev, fullName: e.target.value }))
+                  }
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Email</label>
+                <input
+                  className="input-field"
+                  type="email"
+                  value={editingPatient.email}
+                  onChange={(e) =>
+                    setEditingPatient((prev) => ({ ...prev, email: e.target.value }))
+                  }
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Age</label>
+                <input
+                  className="input-field"
+                  type="number"
+                  value={editingPatient.age || ''}
+                  onChange={(e) =>
+                    setEditingPatient((prev) => ({ ...prev, age: parseInt(e.target.value) }))
+                  }
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Gender</label>
+                <select
+                  className="input-field"
+                  value={editingPatient.gender || ''}
+                  onChange={(e) =>
+                    setEditingPatient((prev) => ({ ...prev, gender: e.target.value }))
+                  }
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Phone</label>
+                <input
+                  className="input-field"
+                  value={editingPatient.phone || ''}
+                  onChange={(e) =>
+                    setEditingPatient((prev) => ({ ...prev, phone: e.target.value }))
+                  }
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">City</label>
+                <input
+                  className="input-field"
+                  value={editingPatient.city || ''}
+                  onChange={(e) =>
+                    setEditingPatient((prev) => ({ ...prev, city: e.target.value }))
+                  }
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">State</label>
+                <input
+                  className="input-field"
+                  value={editingPatient.state || ''}
+                  onChange={(e) =>
+                    setEditingPatient((prev) => ({ ...prev, state: e.target.value }))
+                  }
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Password (leave blank to keep current)</label>
+                <input
+                  className="input-field"
+                  type="password"
+                  placeholder="New password"
+                  onChange={(e) =>
+                    setEditingPatient((prev) => ({ ...prev, password: e.target.value }))
+                  }
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <button
+                className="px-4 py-2 border rounded-md"
+                onClick={() => {
+                  setEditingPatient(null);
+                  setPatientPhotoFile(null);
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn-primary px-4 py-2 rounded-md"
+                onClick={handleSavePatient}
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Psychologist Edit Modal */}
+      {editingPsych && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h2 className="text-2xl font-semibold mb-4">Edit Psychologist</h2>
+            <div className="space-y-4">
+              <div className="flex justify-center mb-4">
+                <div className="text-center">
+                  {psychPhotoFile && (
+                    <img
+                      src={URL.createObjectURL(psychPhotoFile)}
+                      alt="Preview"
+                      className="h-32 w-32 object-cover rounded-lg mx-auto mb-2"
+                    />
+                  )}
+                  {!psychPhotoFile && editingPsych.profilePicture && (
+                    <img
+                      src={editingPsych.profilePicture}
+                      alt="Current"
+                      className="h-32 w-32 object-cover rounded-lg mx-auto mb-2"
+                    />
+                  )}
+                  {!psychPhotoFile && !editingPsych.profilePicture && (
+                    <div className="h-32 w-32 bg-gray-200 rounded-lg mx-auto mb-2 flex items-center justify-center">
+                      <span className="text-gray-500">No Photo</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Profile Picture</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setPsychPhotoFile(e.target.files?.[0] || null)}
+                  className="input-field"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Full Name</label>
+                <input
+                  className="input-field"
+                  value={editingPsych.fullName}
+                  onChange={(e) =>
+                    setEditingPsych((prev) => ({ ...prev, fullName: e.target.value }))
+                  }
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Email</label>
+                <input
+                  className="input-field"
+                  type="email"
+                  value={editingPsych.email}
+                  onChange={(e) =>
+                    setEditingPsych((prev) => ({ ...prev, email: e.target.value }))
+                  }
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Phone</label>
+                <input
+                  className="input-field"
+                  value={editingPsych.phone || ''}
+                  onChange={(e) =>
+                    setEditingPsych((prev) => ({ ...prev, phone: e.target.value }))
+                  }
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Gender</label>
+                <select
+                  className="input-field"
+                  value={editingPsych.gender || ''}
+                  onChange={(e) =>
+                    setEditingPsych((prev) => ({ ...prev, gender: e.target.value }))
+                  }
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Specialization</label>
+                <input
+                  className="input-field"
+                  value={editingPsych.specialization || ''}
+                  onChange={(e) =>
+                    setEditingPsych((prev) => ({ ...prev, specialization: e.target.value }))
+                  }
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">License Number</label>
+                <input
+                  className="input-field"
+                  value={editingPsych.licenseNumber || ''}
+                  onChange={(e) =>
+                    setEditingPsych((prev) => ({ ...prev, licenseNumber: e.target.value }))
+                  }
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Years of Experience</label>
+                <input
+                  className="input-field"
+                  type="number"
+                  value={editingPsych.yearsExperience || ''}
+                  onChange={(e) =>
+                    setEditingPsych((prev) => ({ ...prev, yearsExperience: parseInt(e.target.value) }))
+                  }
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Consultation Fee (₹)</label>
+                <input
+                  className="input-field"
+                  type="number"
+                  value={editingPsych.consultationFee || ''}
+                  onChange={(e) =>
+                    setEditingPsych((prev) => ({ ...prev, consultationFee: parseFloat(e.target.value) }))
+                  }
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Clinic Address</label>
+                <textarea
+                  className="input-field"
+                  value={editingPsych.clinicAddress || ''}
+                  onChange={(e) =>
+                    setEditingPsych((prev) => ({ ...prev, clinicAddress: e.target.value }))
+                  }
+                  rows="3"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Qualifications</label>
+                <textarea
+                  className="input-field"
+                  value={editingPsych.qualifications || ''}
+                  onChange={(e) =>
+                    setEditingPsych((prev) => ({ ...prev, qualifications: e.target.value }))
+                  }
+                  rows="3"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Password (leave blank to keep current)</label>
+                <input
+                  className="input-field"
+                  type="password"
+                  placeholder="New password"
+                  onChange={(e) =>
+                    setEditingPsych((prev) => ({ ...prev, password: e.target.value }))
+                  }
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <button
+                className="px-4 py-2 border rounded-md"
+                onClick={() => {
+                  setEditingPsych(null);
+                  setPsychPhotoFile(null);
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn-primary px-4 py-2 rounded-md"
+                onClick={handleSavePsych}
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

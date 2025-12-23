@@ -184,3 +184,160 @@ export const updateSettings = async (req, res) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
+export const updatePatient = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { fullName, email, password, age, gender, city, state, phone } = req.body;
+
+    if (!id) return res.status(400).json({ message: 'Patient ID is required' });
+    if (!fullName || !email) return res.status(400).json({ message: 'Name and email are required' });
+
+    const patient = await prisma.patient.findUnique({ where: { id } });
+    if (!patient) return res.status(404).json({ message: 'Patient not found' });
+
+    // Check if email is being changed and if it's already in use
+    if (email !== patient.email) {
+      const exists = await prisma.patient.findUnique({ where: { email } });
+      if (exists) return res.status(409).json({ message: 'Email already in use' });
+    }
+
+    const updateData = {
+      fullName,
+      email,
+      age: age ? parseInt(age, 10) : null,
+      gender,
+      city,
+      state,
+      phone,
+    };
+
+    if (password) {
+      updateData.password = await hashPassword(password);
+    }
+
+    const updated = await prisma.patient.update({
+      where: { id },
+      data: updateData,
+    });
+
+    res.status(200).json({ message: 'Patient updated', patient: updated });
+  } catch (error) {
+    console.error('Admin updatePatient error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+export const updatePsychologist = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      fullName,
+      email,
+      password,
+      phone,
+      gender,
+      clinicAddress,
+      qualifications,
+      licenseNumber,
+      yearsExperience,
+      consultationFee,
+      specialization,
+    } = req.body;
+
+    if (!id) return res.status(400).json({ message: 'Psychologist ID is required' });
+    if (!fullName || !email || !licenseNumber || !consultationFee) {
+      return res.status(400).json({ message: 'Name, email, license, and fee are required' });
+    }
+
+    const psychologist = await prisma.psychologist.findUnique({ where: { id } });
+    if (!psychologist) return res.status(404).json({ message: 'Psychologist not found' });
+
+    // Check if email is being changed and if it's already in use
+    if (email !== psychologist.email) {
+      const exists = await prisma.psychologist.findUnique({ where: { email } });
+      if (exists) return res.status(409).json({ message: 'Email already in use' });
+    }
+
+    // Check if license is being changed and if it's already in use
+    if (licenseNumber !== psychologist.licenseNumber) {
+      const existsLicense = await prisma.psychologist.findUnique({ where: { licenseNumber } });
+      if (existsLicense) return res.status(409).json({ message: 'License already in use' });
+    }
+
+    const updateData = {
+      fullName,
+      email,
+      phone,
+      gender,
+      clinicAddress,
+      qualifications,
+      licenseNumber,
+      yearsExperience: yearsExperience ? parseInt(yearsExperience) : null,
+      consultationFee: parseFloat(consultationFee),
+      specialization,
+    };
+
+    if (password) {
+      updateData.password = await hashPassword(password);
+    }
+
+    const updated = await prisma.psychologist.update({
+      where: { id },
+      data: updateData,
+    });
+
+    res.status(200).json({ message: 'Psychologist updated', psychologist: updated });
+  } catch (error) {
+    console.error('Admin updatePsychologist error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+export const uploadPatientProfilePicture = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const patient = await prisma.patient.findUnique({ where: { id } });
+    if (!patient) return res.status(404).json({ message: 'Patient not found' });
+
+    const profilePicture = `/uploads/${req.file.filename}`;
+    const updated = await prisma.patient.update({
+      where: { id },
+      data: { profilePicture },
+    });
+
+    res.status(200).json({ message: 'Profile picture updated', patient: updated });
+  } catch (error) {
+    console.error('Admin uploadPatientProfilePicture error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+export const uploadPsychologistProfilePicture = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const psychologist = await prisma.psychologist.findUnique({ where: { id } });
+    if (!psychologist) return res.status(404).json({ message: 'Psychologist not found' });
+
+    const profilePicture = `/uploads/${req.file.filename}`;
+    const updated = await prisma.psychologist.update({
+      where: { id },
+      data: { profilePicture },
+    });
+
+    res.status(200).json({ message: 'Profile picture updated', psychologist: updated });
+  } catch (error) {
+    console.error('Admin uploadPsychologistProfilePicture error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};

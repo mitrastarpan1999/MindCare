@@ -13,12 +13,13 @@ export const config = {
   PAYMENTS_ENABLED: process.env.PAYMENTS_ENABLED !== 'false',
   RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID,
   RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
-  FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:5173',
+  FRONTEND_URL: process.env.FRONTEND_URL || 'http://local  VITE_FORMSPREE_ID=<your_form_id_here>host:5173',
   SMTP_HOST: process.env.SMTP_HOST,
   SMTP_PORT: process.env.SMTP_PORT,
   SMTP_USER: process.env.SMTP_USER,
   SMTP_PASSWORD: process.env.SMTP_PASSWORD,
   SENDER_EMAIL: process.env.SENDER_EMAIL,
+  CONTACT_EMAIL: process.env.CONTACT_EMAIL || 'mitrastarpan1999@gmail.com',
 };
 
 export default config;
