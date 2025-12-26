@@ -134,8 +134,23 @@ export default function Home() {
     <div className="min-h-screen" style={{ backgroundColor: 'var(--background-color)' }}>
       <style>{styles}</style>
       {/* Hero Section */}
-      <section className="relative py-32 px-4 sm:px-6 lg:px-8 overflow-hidden" style={{ background: 'linear-gradient(135deg, var(--background-color) 0%, rgba(255,255,255,0.5) 100%)' }}>
-        <div className="absolute inset-0 opacity-20" style={{ background: 'radial-gradient(circle at 20% 50%, var(--primary-color), transparent 50%), radial-gradient(circle at 80% 80%, var(--secondary-color), transparent 50%)' }}></div>
+      <section
+        className="relative py-32 px-4 sm:px-6 lg:px-8 overflow-hidden"
+        style={{
+          backgroundImage:
+            'linear-gradient(135deg, rgba(249,250,251,0.9), rgba(255,255,255,0.92)), url(https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1800&q=80)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+        }}
+      >
+        <div
+          className="absolute inset-0 opacity-30"
+          style={{
+            background:
+              'radial-gradient(circle at 20% 50%, var(--primary-color), transparent 45%), radial-gradient(circle at 80% 80%, var(--secondary-color), transparent 45%)',
+          }}
+        ></div>
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="text-center mb-12">
             <div className="animate-fade-in-up">
