@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { Heart, Brain, Users, Shield, Stethoscope, MessageCircle, TrendingUp, Award, ArrowRight, CheckCircle } from 'lucide-react';
 import ExpertCarousel from '../components/ExpertCarousel';
-import AIVideoGallery from '../components/AIVideoGallery';
+// AI Video Gallery removed as per request
 
 const styles = `
   @keyframes fadeInUp {
@@ -181,8 +181,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* AI Video Gallery */}
-      <AIVideoGallery />
+      {/* AI Video Gallery removed */}
 
       {/* Stats Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white border-b">
