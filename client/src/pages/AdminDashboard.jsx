@@ -10,7 +10,19 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [patientForm, setPatientForm] = useState({ fullName: '', email: '', password: '', city: '' });
-  const [psychForm, setPsychForm] = useState({ fullName: '', email: '', password: '', city: '' });
+  const [psychForm, setPsychForm] = useState({
+    fullName: '',
+    email: '',
+    password: '',
+    phone: '',
+    gender: '',
+    specialization: '',
+    licenseNumber: '',
+    qualifications: '',
+    yearsExperience: '',
+    consultationFee: '',
+    clinicAddress: '',
+  });
   const [editingPatient, setEditingPatient] = useState(null);
   const [editingPsych, setEditingPsych] = useState(null);
   const [activeTab, setActiveTab] = useState('users'); // 'users' or 'settings'
@@ -218,8 +230,20 @@ export default function AdminDashboard() {
   const handleCreatePsychologist = async (e) => {
     e.preventDefault();
     try {
-      await adminAPI.createPsychologist({ ...psychForm, city: psychForm.city });
-      setPsychForm({ fullName: '', email: '', password: '', city: '' });
+      await adminAPI.createPsychologist(psychForm);
+      setPsychForm({
+        fullName: '',
+        email: '',
+        password: '',
+        phone: '',
+        gender: '',
+        specialization: '',
+        licenseNumber: '',
+        qualifications: '',
+        yearsExperience: '',
+        consultationFee: '',
+        clinicAddress: '',
+      });
       loadData();
     } catch (err) {
       alert(err?.response?.data?.message || 'Failed to add psychologist');
@@ -346,19 +370,19 @@ export default function AdminDashboard() {
           </section>
 
           <section>
-            <h2 className="text-xl font-semibold mb-2">Psychologists</h2>
-            <form onSubmit={handleCreatePsychologist} className="mb-4 p-4 border rounded bg-white space-y-3">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <h2 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3">Psychologists</h2>
+            <form onSubmit={handleCreatePsychologist} className="mb-4 p-3 sm:p-4 border rounded bg-white space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                 <input
                   className="input-field"
-                  placeholder="Full name"
+                  placeholder="Full name *"
                   value={psychForm.fullName}
                   onChange={(e) => setPsychForm((prev) => ({ ...prev, fullName: e.target.value }))}
                   required
                 />
                 <input
                   className="input-field"
-                  placeholder="Email"
+                  placeholder="Email *"
                   type="email"
                   value={psychForm.email}
                   onChange={(e) => setPsychForm((prev) => ({ ...prev, email: e.target.value }))}
@@ -366,7 +390,7 @@ export default function AdminDashboard() {
                 />
                 <input
                   className="input-field"
-                  placeholder="Password"
+                  placeholder="Password *"
                   type="password"
                   value={psychForm.password}
                   onChange={(e) => setPsychForm((prev) => ({ ...prev, password: e.target.value }))}
@@ -374,13 +398,61 @@ export default function AdminDashboard() {
                 />
                 <input
                   className="input-field"
-                  placeholder="City"
-                  value={psychForm.city}
-                  onChange={(e) => setPsychForm((prev) => ({ ...prev, city: e.target.value }))}
+                  placeholder="License Number *"
+                  value={psychForm.licenseNumber}
+                  onChange={(e) => setPsychForm((prev) => ({ ...prev, licenseNumber: e.target.value }))}
+                  required
+                />
+                <input
+                  className="input-field"
+                  placeholder="Consultation Fee *"
+                  type="number"
+                  step="0.01"
+                  value={psychForm.consultationFee}
+                  onChange={(e) => setPsychForm((prev) => ({ ...prev, consultationFee: e.target.value }))}
+                  required
+                />
+                <input
+                  className="input-field"
+                  placeholder="Specialization"
+                  value={psychForm.specialization}
+                  onChange={(e) => setPsychForm((prev) => ({ ...prev, specialization: e.target.value }))}
+                />
+                <input
+                  className="input-field"
+                  placeholder="Phone"
+                  value={psychForm.phone}
+                  onChange={(e) => setPsychForm((prev) => ({ ...prev, phone: e.target.value }))}
+                />
+                <input
+                  className="input-field"
+                  placeholder="Gender"
+                  value={psychForm.gender}
+                  onChange={(e) => setPsychForm((prev) => ({ ...prev, gender: e.target.value }))}
+                />
+                <input
+                  className="input-field"
+                  placeholder="Qualifications"
+                  value={psychForm.qualifications}
+                  onChange={(e) => setPsychForm((prev) => ({ ...prev, qualifications: e.target.value }))}
+                />
+                <input
+                  className="input-field"
+                  placeholder="Years of Experience"
+                  type="number"
+                  value={psychForm.yearsExperience}
+                  onChange={(e) => setPsychForm((prev) => ({ ...prev, yearsExperience: e.target.value }))}
+                />
+                <textarea
+                  className="input-field col-span-1 sm:col-span-2"
+                  placeholder="Clinic Address"
+                  rows="2"
+                  value={psychForm.clinicAddress}
+                  onChange={(e) => setPsychForm((prev) => ({ ...prev, clinicAddress: e.target.value }))}
                 />
               </div>
               <div className="flex justify-end">
-                <button type="submit" className="btn-primary px-4 py-2 rounded-md font-semibold">
+                <button type="submit" className="btn-primary px-4 py-2 rounded-md font-semibold text-sm">
                   Add Psychologist
                 </button>
               </div>
