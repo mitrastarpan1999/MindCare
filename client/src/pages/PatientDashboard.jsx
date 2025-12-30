@@ -69,9 +69,20 @@ export default function PatientDashboard() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 mb-8 sm:mb-12">
         <div className="card p-4 sm:p-6">
-          <h3 className="text-sm sm:text-base font-semibold mb-1 sm:mb-2 text-gray-600">Welcome</h3>
-          <p className="text-base sm:text-lg font-bold text-gray-900">{user?.fullName}</p>
-          <p className="text-xs sm:text-sm text-gray-500 truncate">{user?.email}</p>
+          <h3 className="text-sm sm:text-base font-semibold mb-3 sm:mb-4 text-gray-600">Welcome</h3>
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
+              <img
+                src={resolveImage(user?.profilePicture, user?.fullName)}
+                alt={user?.fullName}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-base sm:text-lg font-bold text-gray-900 truncate">{user?.fullName}</p>
+              <p className="text-xs sm:text-sm text-gray-500 truncate">{user?.email}</p>
+            </div>
+          </div>
         </div>
 
         <div className="card p-4 sm:p-6">
