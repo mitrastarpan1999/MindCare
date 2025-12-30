@@ -40,7 +40,17 @@ export default function Footer() {
 
         <hr className="my-8" style={{ borderColor: 'rgba(255,255,255,0.25)' }} />
         <div className="text-center opacity-80">
-          <p>&copy; 2025 MindCare. All rights reserved.</p>
+          <p>
+            &copy; 2025 MindCare. All rights reserved. This project is designed by{' '}
+            <a
+              href="https://arpanmitra-dev.onrender.com/"
+              className="underline hover:opacity-100"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Arpan Mitra
+            </a>
+          </p>
         </div>
       </div>
     </footer>
