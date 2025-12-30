@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { publicAPI } from '../services/api';
 
 export default function Contact() {
-  const FORMSPREE_ID = import.meta.env.VITE_FORMSPREE_ID || 'xeejvoee';
+  const FORMSPREE_ID = import.meta.env.VITE_FORMSPREE_ID || '';
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -23,8 +23,9 @@ export default function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (FORMSPREE_ID) {
-        const endpoint = `https://formspree.io/f/${FORMSPREE_ID}`;
+      const trimmedId = FORMSPREE_ID.trim();
+      if (trimmedId) {
+        const endpoint = `https://formspree.io/f/${trimmedId}`;
         const data = new FormData();
         data.append('name', formData.name);
         data.append('email', formData.email);

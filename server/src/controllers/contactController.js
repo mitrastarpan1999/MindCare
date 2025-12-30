@@ -45,7 +45,7 @@ export const sendContactMessage = async (req, res) => {
     });
   }
 
-  const toAddress = config.CONTACT_EMAIL || 'mitrastarpan1999@gmail.com';
+  const toAddress = config.CONTACT_EMAIL || config.SMTP_USER;
   const fromAddress = config.SENDER_EMAIL || config.SMTP_USER || 'no-reply@mindcare.local';
 
   try {
